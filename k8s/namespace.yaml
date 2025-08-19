@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iceberg-benchmark
+  labels:
+    name: iceberg-benchmark
+    app: iceberg-benchmark

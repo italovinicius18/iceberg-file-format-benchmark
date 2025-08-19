@@ -1,4 +1,4 @@
-.PHONY: help setup run monitor clean check-deps build-image
+.PHONY: help setup run monitor clean check-deps build-image setup-kind deploy-k8s monitor-k8s clean-kind run-benchmark
 .DEFAULT_GOAL := help
 
 # Configuration
@@ -95,3 +95,60 @@ dev-build: ## Build image for development (with cache)
 
 dev-run: ## Run benchmark in development mode
 	@docker run --rm -it -v $(PWD):/app $(DOCKER_IMAGE) bash
+
+# Kind/Kubernetes specific targets
+setup-kind: check-deps build-image ## Setup Kind cluster for benchmarking
+	@echo "$(BLUE)Setting up Kind cluster...$(NC)"
+	@./scripts/setup-kind.sh
+	@echo "$(GREEN)Kind cluster setup completed!$(NC)"
+
+deploy-k8s: ## Deploy benchmark jobs to Kubernetes
+	@echo "$(BLUE)Deploying to Kubernetes...$(NC)"
+	@./scripts/deploy-k8s.sh
+	@echo "$(GREEN)Deployment completed!$(NC)"
+
+monitor-k8s: ## Monitor Kubernetes jobs and pods
+	@echo "$(BLUE)Monitoring Kubernetes resources...$(NC)"
+	@./scripts/monitor-k8s.sh
+
+monitor-k8s-watch: ## Monitor Kubernetes continuously
+	@echo "$(BLUE)Starting continuous monitoring...$(NC)"
+	@./scripts/monitor-k8s.sh --watch
+
+clean-kind: ## Clean up Kind cluster completely
+	@echo "$(YELLOW)Cleaning up Kind cluster...$(NC)"
+	@kind delete cluster --name $(CLUSTER_NAME) 2>/dev/null || echo "Cluster not found"
+	@echo "$(GREEN)Kind cluster cleaned up!$(NC)"
+
+run-benchmark: ## Run complete benchmark suite with Docker
+	@echo "$(BLUE)Running complete benchmark suite...$(NC)"
+	@mkdir -p data output metrics
+	@docker run --rm \
+		-v $(PWD)/data:/app/data \
+		-v $(PWD)/output:/app/output \
+		-v $(PWD)/metrics:/app/metrics \
+		-v $(PWD)/scripts:/app/scripts \
+		$(DOCKER_IMAGE) \
+		python3 /app/scripts/corrected_format_benchmark.py
+	@echo "$(GREEN)Benchmark completed! Check metrics/ for results.$(NC)"
+
+# Quick start commands
+quick-start: setup-kind deploy-k8s ## Complete setup and deploy (one command)
+	@echo "$(GREEN)🎉 Quick start completed! Use 'make monitor-k8s' to check progress.$(NC)"
+
+full-benchmark: setup-kind deploy-k8s monitor-k8s ## Complete benchmark workflow
+	@echo "$(GREEN)🎉 Full benchmark workflow completed!$(NC)"
+
+extract-k8s-results: ## Extract benchmark results from Kubernetes pods
+	@echo "$(BLUE)Extracting Kubernetes benchmark results...$(NC)"
+	@./scripts/extract-k8s-results.sh
+	@echo "$(GREEN)Results extracted successfully!$(NC)"
+
+view-k8s-results: extract-k8s-results ## View extracted Kubernetes results
+	@echo "$(BLUE)📊 KUBERNETES BENCHMARK RESULTS$(NC)"
+	@echo "=================================="
+	@echo ""
+	@echo "🏆 Best overall combination found:"
+	@grep -A 5 "MELHOR COMBINAÇÃO GERAL" ./k8s-results/*-analysis.txt | head -10
+	@echo ""
+	@echo "📁 Detailed results available in: ./k8s-results/"

@@ -60,6 +60,7 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 # Copy application code
 COPY src/ /app/src/
 COPY configs/ /app/configs/
+COPY scripts/ /app/scripts/
 
 # Set working directory
 WORKDIR /app

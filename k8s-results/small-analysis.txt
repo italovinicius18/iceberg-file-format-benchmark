@@ -1,0 +1,44 @@
+📈 ANÁLISE DOS RESULTADOS CORRIGIDOS
+============================================================
+
+🔍 ESCALA: MICRO (100 rows)
+--------------------------------------------------
+💾 Top 3 compressão (menor = melhor):
+   1. orc + zlib           |     8.68 KB
+   2. orc + zstd           |     9.37 KB
+   3. parquet + zstd       |    13.14 KB
+
+⚡ Top 3 performance (menor = melhor):
+   1. orc + zlib           | 0.068s
+   2. orc + zstd           | 0.072s
+   3. parquet + zstd       | 0.091s
+
+🔍 ESCALA: LARGE (100000 rows)
+--------------------------------------------------
+💾 Top 3 compressão (menor = melhor):
+   1. orc + zstd           |  5510.70 KB
+   2. orc + zlib           |  5637.30 KB
+   3. parquet + zstd       |  5944.48 KB
+
+⚡ Top 3 performance (menor = melhor):
+   1. orc + zlib           | 0.067s
+   2. parquet + gzip       | 0.076s
+   3. orc + zstd           | 0.081s
+
+🎯 ANÁLISE GERAL
+----------------------------------------
+
+📊 FORMATO (médias):
+   PARQUET  | Tamanho:  4285.27 KB | Tempo: 0.116s
+   ORC      | Tamanho:  3297.38 KB | Tempo: 0.078s
+
+🏆 MELHOR COMBINAÇÃO GERAL:
+   Formato: ORC
+   Compressão: ZLIB
+   Escala: micro
+   Tamanho: 8.68 KB
+   Performance: 0.068s
+
+💾 Resultados salvos em: /app/metrics/format_comparison_corrected.json
+
+🎉 Benchmark corrigido concluído!

@@ -1,0 +1,170 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: iceberg-benchmark-micro
+  namespace: iceberg-benchmark
+  labels:
+    app: iceberg-benchmark
+    scale: micro
+spec:
+  template:
+    metadata:
+      labels:
+        app: iceberg-benchmark
+        scale: micro
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: benchmark
+        image: iceberg-benchmark:latest
+        imagePullPolicy: Never
+        command: ["python3"]
+        args: ["/app/scripts/corrected_format_benchmark.py"]
+        env:
+        - name: SCALE
+          value: "micro"
+        - name: BENCHMARK_CONFIG
+          value: "micro"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+        volumeMounts:
+        - name: benchmark-data
+          mountPath: /app/data
+        - name: benchmark-output
+          mountPath: /app/output
+        - name: benchmark-metrics
+          mountPath: /app/metrics
+        - name: config-volume
+          mountPath: /app/configs
+      volumes:
+      - name: benchmark-data
+        persistentVolumeClaim:
+          claimName: benchmark-data-pvc
+      - name: benchmark-output
+        persistentVolumeClaim:
+          claimName: benchmark-output-pvc
+      - name: benchmark-metrics
+        persistentVolumeClaim:
+          claimName: benchmark-metrics-pvc
+      - name: config-volume
+        configMap:
+          name: benchmark-configs
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: iceberg-benchmark-small
+  namespace: iceberg-benchmark
+  labels:
+    app: iceberg-benchmark
+    scale: small
+spec:
+  template:
+    metadata:
+      labels:
+        app: iceberg-benchmark
+        scale: small
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: benchmark
+        image: iceberg-benchmark:latest
+        imagePullPolicy: Never
+        command: ["python3"]
+        args: ["/app/scripts/corrected_format_benchmark.py"]
+        env:
+        - name: SCALE
+          value: "small"
+        - name: BENCHMARK_CONFIG
+          value: "small"
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2"
+          limits:
+            memory: "8Gi"
+            cpu: "4"
+        volumeMounts:
+        - name: benchmark-data
+          mountPath: /app/data
+        - name: benchmark-output
+          mountPath: /app/output
+        - name: benchmark-metrics
+          mountPath: /app/metrics
+        - name: config-volume
+          mountPath: /app/configs
+      volumes:
+      - name: benchmark-data
+        persistentVolumeClaim:
+          claimName: benchmark-data-pvc
+      - name: benchmark-output
+        persistentVolumeClaim:
+          claimName: benchmark-output-pvc
+      - name: benchmark-metrics
+        persistentVolumeClaim:
+          claimName: benchmark-metrics-pvc
+      - name: config-volume
+        configMap:
+          name: benchmark-configs
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: iceberg-benchmark-medium
+  namespace: iceberg-benchmark
+  labels:
+    app: iceberg-benchmark
+    scale: medium
+spec:
+  template:
+    metadata:
+      labels:
+        app: iceberg-benchmark
+        scale: medium
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: benchmark
+        image: iceberg-benchmark:latest
+        imagePullPolicy: Never
+        command: ["python3"]
+        args: ["/app/scripts/corrected_format_benchmark.py"]
+        env:
+        - name: SCALE
+          value: "medium"
+        - name: BENCHMARK_CONFIG
+          value: "medium"
+        resources:
+          requests:
+            memory: "8Gi"
+            cpu: "4"
+          limits:
+            memory: "16Gi"
+            cpu: "6"
+        volumeMounts:
+        - name: benchmark-data
+          mountPath: /app/data
+        - name: benchmark-output
+          mountPath: /app/output
+        - name: benchmark-metrics
+          mountPath: /app/metrics
+        - name: config-volume
+          mountPath: /app/configs
+      volumes:
+      - name: benchmark-data
+        persistentVolumeClaim:
+          claimName: benchmark-data-pvc
+      - name: benchmark-output
+        persistentVolumeClaim:
+          claimName: benchmark-output-pvc
+      - name: benchmark-metrics
+        persistentVolumeClaim:
+          claimName: benchmark-metrics-pvc
+      - name: config-volume
+        configMap:
+          name: benchmark-configs
