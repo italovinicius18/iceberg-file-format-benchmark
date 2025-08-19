@@ -1,0 +1,96 @@
+# Small benchmark configuration for quick testing
+benchmark:
+  name: "iceberg-small-benchmark"
+  description: "Small scale benchmark for quick validation"
+  
+tpcds:
+  scale_factor: 0.1  # 0.1GB dataset
+  queries: 
+    - "q1"
+    - "q3" 
+    - "q6"
+    - "q7"
+    - "q19"
+    - "q42"
+    - "q52"
+    - "q55"
+    - "q61"
+    - "q68"
+  parallel_jobs: 2
+  
+iceberg:
+  formats:
+    - "parquet"
+    - "orc"
+  
+  compressions:
+    - "snappy"
+    - "zstd"
+    
+  partitioning:
+    - type: "none"
+    - type: "date"
+      columns: ["d_date"]
+    
+spark:
+  driver:
+    memory: "1g"
+    cores: 1
+  
+  executor:
+    memory: "1g" 
+    cores: 1
+    instances: 2
+    
+  config:
+    spark.sql.adaptive.enabled: "true"
+    spark.sql.adaptive.coalescePartitions.enabled: "true"
+    spark.sql.adaptive.skewJoin.enabled: "true"
+    spark.serializer: "org.apache.spark.serializer.KryoSerializer"
+    spark.sql.extensions: "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
+    spark.sql.catalog.spark_catalog: "org.apache.iceberg.spark.SparkSessionCatalog"
+    spark.sql.catalog.spark_catalog.type: "hive"
+    spark.sql.catalog.local: "org.apache.iceberg.spark.SparkCatalog"
+    spark.sql.catalog.local.type: "hadoop"
+    spark.sql.catalog.local.warehouse: "/tmp/iceberg-warehouse"
+    
+kubernetes:
+  namespace: "iceberg-benchmark"
+  
+  resources:
+    driver:
+      requests:
+        memory: "1Gi"
+        cpu: "0.5"
+      limits:
+        memory: "2Gi" 
+        cpu: "1"
+        
+    executor:
+      requests:
+        memory: "1Gi"
+        cpu: "0.5"  
+      limits:
+        memory: "2Gi"
+        cpu: "1"
+        
+  storage:
+    size: "5Gi"
+    class: "standard"
+    
+monitoring:
+  enabled: true
+  metrics_interval: 30  # seconds
+  
+  collect:
+    - "cpu_usage"
+    - "memory_usage" 
+    - "disk_io"
+    - "query_duration"
+    - "data_size"
+    - "compression_ratio"
+    
+output:
+  results_dir: "/app/results"
+  format: "json"
+  include_raw_metrics: true

@@ -1,0 +1,114 @@
+# Medium benchmark configuration for format comparison
+name: "medium-benchmark"
+description: "Medium scale benchmark for comprehensive format analysis"
+
+# Data generation
+scale_factor: 0.1  # Escala média
+data_dir: "/app/data/medium"
+
+# Query configuration
+queries:
+  - "q1"
+  - "q3"
+  - "q6"
+  - "q19"
+  - "q42"
+
+# Format comparison
+formats:
+  - "parquet"
+  - "orc"
+  - "avro"
+
+# Compression options
+compressions:
+  - "snappy"
+  - "gzip"
+  - "zstd"
+  - "lz4"
+  
+iceberg:
+  formats:
+    - "parquet"
+    - "orc"
+  
+  compressions:
+    - "snappy"
+    - "zstd"
+    - "lz4"
+    
+  partitioning:
+    - type: "none"
+    - type: "date"
+      columns: ["d_date"]
+    - type: "hash"
+      columns: ["ss_customer_sk"]
+      buckets: 10
+    
+spark:
+  driver:
+    memory: "2g"
+    cores: 2
+  
+  executor:
+    memory: "2g"
+    cores: 2
+    instances: 4
+    
+  config:
+    spark.sql.adaptive.enabled: "true"
+    spark.sql.adaptive.coalescePartitions.enabled: "true"
+    spark.sql.adaptive.skewJoin.enabled: "true"
+    spark.sql.adaptive.localShuffleReader.enabled: "true"
+    spark.serializer: "org.apache.spark.serializer.KryoSerializer"
+    spark.sql.extensions: "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
+    spark.sql.catalog.spark_catalog: "org.apache.iceberg.spark.SparkSessionCatalog"
+    spark.sql.catalog.spark_catalog.type: "hive"
+    spark.sql.catalog.local: "org.apache.iceberg.spark.SparkCatalog"
+    spark.sql.catalog.local.type: "hadoop"
+    spark.sql.catalog.local.warehouse: "/tmp/iceberg-warehouse"
+    spark.sql.shuffle.partitions: "200"
+    
+kubernetes:
+  namespace: "iceberg-benchmark"
+  
+  resources:
+    driver:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "3Gi"
+        cpu: "2"
+        
+    executor:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "3Gi"
+        cpu: "2"
+        
+  storage:
+    size: "20Gi"
+    class: "standard"
+    
+monitoring:
+  enabled: true
+  metrics_interval: 15  # seconds
+  
+  collect:
+    - "cpu_usage"
+    - "memory_usage"
+    - "disk_io"
+    - "network_io"
+    - "query_duration"
+    - "data_size"
+    - "compression_ratio"
+    - "shuffle_metrics"
+    
+output:
+  results_dir: "/app/results"
+  format: "json"
+  include_raw_metrics: true
+  generate_charts: true

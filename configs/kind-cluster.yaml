@@ -1,0 +1,67 @@
+# Kind cluster configuration for Iceberg benchmark
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: iceberg-benchmark
+
+# Networking configuration
+networking:
+  # Enable pod subnet to avoid conflicts
+  podSubnet: "10.240.0.0/16"
+  serviceSubnet: "10.241.0.0/16"
+  
+# Nodes configuration - lightweight for local development
+nodes:
+  # Control plane node
+  - role: control-plane
+    image: kindest/node:v1.27.3
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      # Spark UI
+      - containerPort: 30040
+        hostPort: 4040
+        protocol: TCP
+      # Additional port for services
+      - containerPort: 30080
+        hostPort: 8080
+        protocol: TCP
+    extraMounts:
+      # Mount local data directory
+      - hostPath: ./data
+        containerPath: /data
+        readOnly: false
+      # Mount results directory  
+      - hostPath: ./results
+        containerPath: /results
+        readOnly: false
+
+  # Worker node 1
+  - role: worker
+    image: kindest/node:v1.27.3
+    extraMounts:
+      - hostPath: ./data
+        containerPath: /data
+        readOnly: false
+      - hostPath: ./results
+        containerPath: /results
+        readOnly: false
+        
+  # Worker node 2  
+  - role: worker
+    image: kindest/node:v1.27.3
+    extraMounts:
+      - hostPath: ./data
+        containerPath: /data
+        readOnly: false
+      - hostPath: ./results
+        containerPath: /results
+        readOnly: false
+
+# Feature gates for better performance
+featureGates:
+  # Enable features that help with local development
+  EphemeralContainers: true

@@ -1,0 +1,160 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data and results directories
+data/
+results/
+logs/
+tmp/
+
+# TPC-DS generated files
+*.dat
+*.tbl
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+.spark-events/
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Docker
+.dockerignore
+Dockerfile.dev
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Temporary files
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional: Exclude large datasets
+*.parquet
+*.orc
+*.avro
+
+# Kind cluster configs
+kind-config-*.yaml
+
+# Local configuration overrides
+local.yaml
+*.local.yaml
+.env.local
+
+# Results and artifacts
+benchmark-results-*/
+reports/
+charts/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+
+# Certificates
+*.crt
+*.cert
+*.csr
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archives
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+
+output/*
+metrics/*

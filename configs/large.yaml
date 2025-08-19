@@ -1,0 +1,51 @@
+# Large benchmark configuration
+name: "large-benchmark"
+description: "Large scale benchmark for production-level format analysis"
+
+# Data generation
+scale_factor: 1.0  # Escala grande
+data_dir: "/app/data/large"
+
+# Query configuration
+queries:
+  - "q1"
+  - "q3"
+  - "q6"
+  - "q19"
+  - "q42"
+
+# Format comparison
+formats:
+  - "parquet"
+  - "orc"
+  - "avro"
+
+# Compression options
+compressions:
+  - "snappy"
+  - "gzip"
+  - "zstd"
+  - "lz4"
+
+# Spark configuration
+spark:
+  app_name: "IcebergBenchmark-Large"
+  master: "local[8]"
+  config:
+    "spark.sql.adaptive.enabled": "true"
+    "spark.sql.adaptive.coalescePartitions.enabled": "true"
+    "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
+    "spark.sql.adaptive.skewJoin.enabled": "true"
+    "spark.sql.adaptive.localShuffleReader.enabled": "true"
+
+# Iceberg configuration
+iceberg:
+  catalog: "local"
+  warehouse: "/app/output/warehouse-large"
+  
+# Output configuration
+output:
+  base_dir: "/app/output/large"
+  metrics_dir: "/app/metrics/large"
+  include_plans: true
+  include_metrics: true
